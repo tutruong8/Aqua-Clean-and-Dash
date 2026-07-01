@@ -201,9 +201,25 @@ function checkCollisions() {
 }
 
 //Lives and Invincibility
+function showHitFeedback() {
+  const popup = document.createElement("div");
+  popup.className = "hit-popup";
+  popup.textContent = "Ouch!";
+
+  popup.style.left = player.x + player.size / 2 - 24 + "px";
+  popup.style.top = player.y - 14 + "px";
+
+  arena.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 800);
+}
+
 function loseLife() {
   gameState.lives -= 1;
   updateHUD();
+  showHitFeedback();
 
   if (gameState.lives <= 0) {
     gameOver();
