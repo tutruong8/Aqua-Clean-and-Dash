@@ -24,7 +24,7 @@ Base & Reset
 
 body {
     background: #c8e6f5;
-    font-family: sans-serif;
+    font-family: "Proxima Nova", "Segoe UI", Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -152,6 +152,13 @@ Invincibility Blink
 /*
 Screen Buttons
 */
+.btn,
+button,
+input,
+textarea {
+    font-family: "Proxima Nova", "Segoe UI", Arial, sans-serif;
+}
+
 .btn {
     background: #f0c040;
     border: none;

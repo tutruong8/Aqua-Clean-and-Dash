@@ -278,6 +278,25 @@ function startTimer() {
 }
 
 //HUD
+function updateMessage() {
+  const messageEl = document.getElementById("message");
+
+  if (!messageEl) return;
+
+  if (gameState.score >= 700) {
+    messageEl.textContent = "Wait... how did you get this many?";
+  } else if (gameState.score >= 500) {
+    messageEl.textContent = "You are a great player!";
+  } else if (gameState.score >= 300) {
+    messageEl.textContent = "Wow... you collected plenty of clean water!";
+  } else if (gameState.score >= 100) {
+    messageEl.textContent = "You're good at cleaning water!";
+  } else {
+    messageEl.textContent =
+      "Use WASD, Arrow Keys, or joystick on mobile devices to move";
+  }
+}
+
 function updateHUD() {
   document.getElementById("score-display").textContent =
     "Score: " + gameState.score;
@@ -288,6 +307,8 @@ function updateHUD() {
   const secs = String(Math.floor(gameState.timeLeft % 60)).padStart(2, "0");
   document.getElementById("timer-display").textContent =
     "Time: " + mins + ":" + secs;
+
+  updateMessage();
 }
 
 //Game Start
@@ -332,5 +353,6 @@ function gameOver() {
   resetJoystick();
 
   document.getElementById("final-score").textContent = gameState.score;
+  updateMessage();
   showScreen("gameover-screen");
 }
