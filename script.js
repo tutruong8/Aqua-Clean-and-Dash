@@ -4,23 +4,34 @@ console.log('JavaScript file is linked correctly.');
 //Game State
 const gameState = {
   score: 0,
-  lives: 5,
+  lives: 6, //Easy is 6, Medium is 4, Hard is 2
   timeLeft: 90,
   isRunning: false,
   isInvincible: false,
+  cleanRatio: 0.7, //Easy is 0.7, Medium is 0.5, Hard is 0.3
 };
 
 //Screen Management
 const screens = document.querySelectorAll(".screen");
+const charityFooter = document.getElementById("charity-footer");
 
 function showScreen(screenId) {
   screens.forEach((s) => s.classList.remove("active"));
   document.getElementById(screenId).classList.add("active");
+  charityFooter.style.display = screenId === "game-screen" ? "none" : "flex";
 }
 
-document.getElementById("play-btn").addEventListener("click", () => {
-  startGame();
+// Difficulty Buttons
+document.getElementById("play-easy-btn").addEventListener("click", () => {
+    startGame("easy");
 });
+document.getElementById("play-medium-btn").addEventListener("click", () => {
+    startGame("medium");
+});
+document.getElementById("play-hard-btn").addEventListener("click", () => {
+    startGame("hard");
+});
+
 
 document.getElementById("play-again-btn").addEventListener("click", () => {
   showScreen("title-screen");
@@ -118,7 +129,8 @@ let spawnInterval = null;
 function spawnDroplet() {
   if (!gameState.isRunning) return;
 
-  const type = Math.random() < 0.6 ? "clean" : "polluted";
+  // Use cleanRatio set by difficulty selection
+  const type = Math.random() < gameState.cleanRatio ? "clean" : "polluted";
   const size = 24;
 
   const el = document.createElement("div");
@@ -279,9 +291,14 @@ function updateHUD() {
 }
 
 //Game Start
-function startGame() {
+function startGame(selectedDifficulty = "easy") {
+  // Set clean droplet ratio based on chosen difficulty
+  const lives = { easy: 6, medium: 4, hard: 2 };
+  const ratios = { easy: 0.8, medium: 0.5, hard: 0.3 };
+ 
+  gameState.cleanRatio = ratios[selectedDifficulty] ?? 0.8;
   gameState.score = 0;
-  gameState.lives = 5;
+  gameState.lives = lives[selectedDifficulty] ?? 6;
   gameState.timeLeft = 90;
   gameState.isRunning = true;
   gameState.isInvincible = false;

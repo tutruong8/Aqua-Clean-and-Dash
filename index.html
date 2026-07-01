@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover>
         <title>Aqua Clean and Dash</title>
         <link rel="stylesheet" href="styles.css" />
     </head>
@@ -10,8 +10,13 @@
         <!-- Title Screen -->
         <div id="title-screen" class="screen active">
             <img src="img/logo.png" id="logo" alt="gameLogo" />
-            <button class="btn" id="play-btn">Play</button>
-            <button class="btn" id="link"><a href="https://www.charitywater.org/about">More about charity: water</a></button>
+            <p id="difficulty-label">Select a difficulty</p>
+            <div id="difficulty-buttons">
+                <button class="btn btn-easy"   id="play-easy-btn">Easy</button>
+                <button class="btn btn-medium" id="play-medium-btn">Medium</button>
+                <button class="btn btn-hard"   id="play-hard-btn">Hard</button>
+            </div>
+
         </div>
 
         <!-- Game Screen -->
@@ -29,7 +34,7 @@
             </div>
 
             <!-- Desktop only: keyboard reminder -->
-            <p id="controls-hint">Use WASD or Arrow Keys to move</p>
+            <p id="message">Use WASD, Arrow Keys, or joystick on mobile devices to move</p>
 
             <!-- action buttons -->
             <div id="controls">
@@ -66,13 +71,24 @@
             </div>
         </div>
 
-        <!-- Game Over and Donate -->
+        <!-- Game Over -->
         <div id="gameover-screen" class="screen">
             <h2>GAME OVER!</h2>
             <p>Your Score: <span id="final-score">0</span></p>
             <button class="btn" id="play-again-btn">Play Again</button>
-            <button class="btn" id="link"><a href="https://www.charitywater.org/take-action">Donate to charity: water</a></button>
         </div>
+
+        <!-- Footer (only on title and game over screen) -->
+        
+        <footer id="charity-footer">
+          <a class="footer-link" href="https://www.charitywater.org/about" target="_blank">
+              More about charity: water
+          </a>
+          <span class="footer-divider">|</span>
+          <a class="footer-link" href="https://www.charitywater.org/take-action" target="_blank">
+              Donate
+          </a>
+        </footer>
 
         <script src="script.js"></script>
     </body>
