@@ -53,6 +53,12 @@ const keysHeld = {};
 
 document.addEventListener("keydown", (e) => {
   keysHeld[e.key] = true;
+
+  // Clean ability: fire once per press, not repeatedly while held
+  if (e.code === "Space" && !e.repeat) {
+    e.preventDefault(); // stop the page from scrolling on spacebar
+    activateClean();
+  }
 });
 document.addEventListener("keyup", (e) => {
   keysHeld[e.key] = false;
@@ -171,6 +177,113 @@ function startSpawning() {
   spawnDroplet();
   spawnInterval = setInterval(spawnDroplet, 750);
 }
+
+//Clean Ability
+const cleanBtn = document.getElementById("clean-btn");
+const CLEAN_RADIUS = 90; //Range of clean ability
+const CLEAN_COOLDOWN_MS = 5000;
+let cleanCooldownTimer = null;
+let cleanCooldownEndsAt = 0;
+
+function updateCleanButton() {
+  if (!cleanBtn) return;
+
+  const now = Date.now();
+  const cooldownRemaining = Math.max(0, cleanCooldownEndsAt - now);
+  const progress = cleanCooldownEndsAt === 0 || cooldownRemaining <= 0
+    ? 100
+    : 100 - (cooldownRemaining / CLEAN_COOLDOWN_MS) * 100;
+
+  const isCoolingDown = cooldownRemaining > 0 && gameState.isRunning;
+  cleanBtn.disabled = isCoolingDown || !gameState.isRunning;
+  cleanBtn.style.setProperty("--cooldown-progress", `${Math.min(100, progress)}%`);
+  cleanBtn.classList.toggle("ready", !isCoolingDown && gameState.isRunning);
+
+  if (isCoolingDown) {
+    const secondsLeft = Math.ceil(cooldownRemaining / 1000);
+    cleanBtn.textContent = `Clean ${secondsLeft}s`;
+  } else {
+    clearInterval(cleanCooldownTimer);
+    cleanCooldownTimer = null;
+    cleanBtn.textContent = "Clean";
+  }
+}
+
+function startCleanCooldown() {
+  cleanCooldownEndsAt = Date.now() + CLEAN_COOLDOWN_MS;
+  updateCleanButton();
+
+  clearInterval(cleanCooldownTimer);
+  cleanCooldownTimer = setInterval(updateCleanButton, 100);
+}
+
+function resetCleanCooldown() {
+  clearInterval(cleanCooldownTimer);
+  cleanCooldownTimer = null;
+  cleanCooldownEndsAt = 0;
+  updateCleanButton();
+}
+
+function performClean() {
+  // Player's center, calculated once since it won't move mid-sweep
+  const playerCX = player.x + player.size / 2;
+  const playerCY = player.y + player.size / 2;
+
+  // Loop backwards so removing a droplet mid-loop is safe
+  for (let i = droplets.length - 1; i >= 0; i--) {
+    const d = droplets[i];
+
+    const dropletCX = d.x + d.size / 2;
+    const dropletCY = d.y + d.size / 2;
+
+    const dx = playerCX - dropletCX;
+    const dy = playerCY - dropletCY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < CLEAN_RADIUS) {
+      if (d.type === "clean") {
+        gameState.score += 10;
+      } else if (d.type === "polluted") {
+        gameState.score += 20;
+      }
+      removeDroplet(d);
+    }
+  }
+
+  // One HUD update after the whole sweep, not one per droplet caught
+  updateHUD();
+}
+
+function spawnCleanRing() {
+  const playerCX = player.x + player.size / 2;
+  const playerCY = player.y + player.size / 2;
+
+  const ring = document.createElement("div");
+  ring.className = "clean-ring";
+
+  const diameter = CLEAN_RADIUS * 2;
+  ring.style.width = diameter + "px";
+  ring.style.height = diameter + "px";
+  ring.style.left = playerCX - CLEAN_RADIUS + "px";
+  ring.style.top = playerCY - CLEAN_RADIUS + "px";
+
+  arena.appendChild(ring);
+
+  // Removal delay matches the CSS animation duration above
+  setTimeout(() => {
+    ring.remove();
+  }, 500);
+}
+
+function activateClean() {
+  if (!gameState.isRunning || cleanBtn.disabled) return;
+
+  performClean();
+  spawnCleanRing();
+  startCleanCooldown();
+}
+
+cleanBtn.addEventListener("click", activateClean);
 
 //Collision
 function checkCollisions() {
@@ -341,6 +454,7 @@ function startGame(selectedDifficulty = "easy") {
   gameState.isInvincible = false;
 
   playerEl.classList.remove("player-invincible");
+  resetCleanCooldown();
   resetJoystick();
 
   //Show the screen FIRST so the arena has real dimensions
@@ -365,6 +479,7 @@ function gameOver() {
   gameState.isRunning = false;
   clearInterval(timerInterval);
   clearInterval(spawnInterval);
+  resetCleanCooldown();
   clearAllDroplets();
   resetJoystick();
 

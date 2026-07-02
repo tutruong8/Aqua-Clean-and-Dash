@@ -177,6 +177,27 @@ Invincibility Blink
     }
 }
 
+.clean-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid #2E9DF7;
+    background: rgba(46, 157, 247, 0.15);
+    pointer-events: none;
+    z-index: 5;
+    animation: clean-pulse 0.5s ease-out forwards;
+}
+
+@keyframes clean-pulse {
+    0% {
+        transform: scale(0.3);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
 /*
 Screen Buttons
 */
@@ -201,6 +222,57 @@ textarea {
 
 .btn:hover {
     background: #d4a820;
+}
+
+/*
+Action Buttons
+*/
+.action-btn {
+    position: relative;
+    overflow: hidden;
+    width: 86px;
+    height: 86px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: #8b8b8b;
+    color: #f7f7f7;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: not-allowed;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.action-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--cooldown-progress, 0%);
+    background-color: #2E9DF7;
+    transition: width 0.1s linear;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.action-btn.ready {
+    background-color: #2E9DF7;
+    color: white;
+    cursor: pointer;
+}
+
+.action-btn.ready::before {
+    display: none;
+}
+
+.action-btn:focus-visible {
+    outline: 3px solid rgba(46, 157, 247, 0.35);
+    outline-offset: 2px;
+}
+
+.action-btn span {
+    position: relative;
+    z-index: 1;
 }
 
 /*
