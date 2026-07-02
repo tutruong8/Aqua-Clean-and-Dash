@@ -308,6 +308,8 @@ function checkCollisions() {
       } else if (d.type === "polluted" && !gameState.isInvincible) {
         removeDroplet(d);
         loseLife();
+        const audio = new Audio("audio/damage.mp3");
+        audio.play();
       }
     }
   }
