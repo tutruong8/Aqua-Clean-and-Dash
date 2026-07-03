@@ -464,7 +464,11 @@ For Mobile
     #game-screen {
         justify-content: flex-start;
         gap: 0;
-        height: 100vh;
+        height: 100dvh;
+        padding-top: max(18px, env(safe-area-inset-top));
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        box-sizing: border-box;
     }
 
     #hud {

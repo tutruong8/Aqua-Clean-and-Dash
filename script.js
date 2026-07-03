@@ -284,6 +284,14 @@ function activateClean() {
 }
 
 cleanBtn.addEventListener("click", activateClean);
+cleanBtn.addEventListener(
+  "touchstart",
+  (e) => {
+    e.preventDefault();
+    activateClean();
+  },
+  { passive: false }
+);
 
 //Collision
 function checkCollisions() {
